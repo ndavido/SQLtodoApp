@@ -1,6 +1,56 @@
 import sys
 import os
-from database import Item, Session
+from database import User, Item, Session
+
+def login():
+    print("Login Page")
+    with Session() as session:
+        print("---")
+        print("Please Enter your Email: ")
+        email = input()
+        user = session.query(User).filter( User.email == email ).first()
+        if user:
+            print("Please Enter your Password: ")
+            password = input()
+            if user.password == password:
+                print("Login Successful!")
+            else:
+                while password != user.password:
+                    print("Incorrect Password!")
+                    print("Please Enter your Password: ")
+                    password = input()
+        else:
+            print("User does not exist!")    
+    print("---")
+    
+def register():
+    print("Registration Page")
+    
+    print("---")
+    print("Please enter your email: ")
+    email = input()
+    print("Please enter your name: ")
+    name = input()
+    print("Please enter your password: ")
+    password = input()
+    print("Please re-enter your password: ")
+    passwordConfirm = input()
+    print("---")
+    
+    if password != passwordConfirm:
+        while password != passwordConfirm:
+            print("Passwords entered do not match!")
+            print("Please enter your password: ")
+            password = input()
+            print("Please re-enter your password: ")
+            passwordConfirm = input()
+    else:
+        with Session() as session:
+            newUser = User(email = email, name = name, password = password)
+            session.add(newUser)
+            session.commit()
+    
+    print("---")
 
 def main():
     while True:
@@ -54,4 +104,6 @@ def removeItems():
             print("Invalid ID!")
          
 print("Welcome to TOD-O LIST O-MAKER Version 5123.524")
+register()
+login()
 main()
