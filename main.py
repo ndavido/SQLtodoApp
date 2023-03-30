@@ -25,10 +25,20 @@ def login():
     
 def register():
     print("Registration Page")
-    
     print("---")
-    print("Please enter your email: ")
-    email = input()
+    
+    while True:
+        print("Please enter your email: ")
+        email = input()
+        with Session() as session:
+            user = session.query(User).filter( User.email == email ).first()
+            if user:
+                print("---")
+                print("Email is in use!")
+                print("---")
+            else:
+                break
+                 
     print("Please enter your name: ")
     name = input()
     print("Please enter your password: ")

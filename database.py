@@ -8,7 +8,8 @@ engine = create_engine("sqlite:///todo.db",echo=False, future = True)
 class Item(Base):
     __tablename__ = "items"
     itemId = Column(Integer, primary_key = True, autoincrement = True)
-    name = Column(String)
+    name = Column(String, nullable = False)
+    description = Column(String, nullable = True)
     
 class User(Base):
     __tablename__ = "users"
