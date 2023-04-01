@@ -2,6 +2,11 @@ import sys
 import os
 from database import User, Item, Session
 
+loggedUser = []
+
+#
+#   Login
+#
 def login():
     print("Login Page")
     with Session() as session:
@@ -20,10 +25,15 @@ def login():
                     print("Please Enter your Password: ")
                     password = input()
         else:
-            print("User does not exist!")    
+            print("User does not exist!")
+        loggedUser.append(user.name)   
     print("---")
-    main()
     
+    main()
+
+#
+#   Registration
+#  
 def register():
     print("Registration Page")
     print("---")
@@ -64,8 +74,12 @@ def register():
     print("---")
     login()
 
+#
+#   Main
+#
 def main():
     while True:
+        print(loggedUser)
         print(f"{os.linesep}What do you want to do today?")
         print("1: View todo items")
         print("2: Create new todo item")
@@ -78,6 +92,9 @@ def main():
         if selection == "3": removeItems()
         if selection == "4": sys.exit("Goodbye!")
 
+#
+#   Show Item
+#
 def showItems():
     print("Your todo lists:")
     print("---")
@@ -89,15 +106,35 @@ def showItems():
             print(f"{itemId}: {itemName}")
     print("---" + os.linesep)
     
+#
+#   Create Item
+#
 def createItems():
     print("Name for the item:")
     itemName = input()
     
+    print("Would you like to add a description?")
+    print('''
+        1: Yes
+        2: NO  
+    ''')
+    
+    userInput = input()
+    match userInput:
+        case "1":
+            print("Please enter the description:")
+            description = input()
+        case "2":
+            description = None
+            
     with Session() as session:
-        newItem = Item( name = itemName )
+        newItem = Item( owner = loggedUser[0], name = itemName, description = description )
         session.add(newItem)
         session.commit()
-    
+        
+#
+#   Remove Item
+# 
 def removeItems():
     with Session() as session:
         itemAmount = session.query(Item).count()
@@ -114,17 +151,27 @@ def removeItems():
             session.commit()
         else:
             print("Invalid ID!")
-      
+
+#
+#   Loading Application
+#     
 if __name__ == "__main__":
     print("Welcome to TOD-O LIST O-MAKER Version 5123.524")
+    
     print('''
-          1: Login
-          2: Register
-          ''')
+        1: Login
+        2: Register   
+    ''')
     userInput = input()
-    match userInput:
-        case "1":
-            login()
-        case "2":
-            register()
+    
+    while True:
+        match userInput:
+            case "1":
+                login()
+            case "2":
+                register()
+            case other:
+                print("---")
+                print("Invalid Option!")
+                print("---")
     
