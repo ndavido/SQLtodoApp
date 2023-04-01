@@ -100,7 +100,7 @@ def showItems():
     print("Your todo lists:")
     print("---")
     with Session() as session:
-        items = session.query(Item)
+        items = session.query(Item).filter( Item.owner == loggedUser[0])
         table = []
         for item in items:
             itemId = item.itemId

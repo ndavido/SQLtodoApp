@@ -23,7 +23,6 @@ class User(Base):
     email = Column(String, nullable = False)
     name = Column(String, nullable = False)
     password = Column(String, nullable = False)
-    # itemId = Column(Integer, ForeignKey("items.itemId"), nullable = True)
     items = relationship("Item", secondary="useritem", back_populates="users", single_parent = True)
 
 # User Items
