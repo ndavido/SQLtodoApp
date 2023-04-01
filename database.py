@@ -23,7 +23,7 @@ class User(Base):
     email = Column(String, nullable = False)
     name = Column(String, nullable = False)
     password = Column(String, nullable = False)
-    itemId = Column(Integer, ForeignKey("items.itemId"))
+    # itemId = Column(Integer, ForeignKey("items.itemId"), nullable = True)
     items = relationship("Item", back_populates="users")
     
 Base.metadata.create_all(engine)
