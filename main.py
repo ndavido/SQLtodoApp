@@ -22,6 +22,7 @@ def login():
         else:
             print("User does not exist!")    
     print("---")
+    main()
     
 def register():
     print("Registration Page")
@@ -61,6 +62,7 @@ def register():
             session.commit()
     
     print("---")
+    login()
 
 def main():
     while True:
@@ -112,8 +114,17 @@ def removeItems():
             session.commit()
         else:
             print("Invalid ID!")
-         
-print("Welcome to TOD-O LIST O-MAKER Version 5123.524")
-register()
-login()
-main()
+      
+if __name__ == "__main__":
+    print("Welcome to TOD-O LIST O-MAKER Version 5123.524")
+    print('''
+          1: Login
+          2: Register
+          ''')
+    userInput = input()
+    match userInput:
+        case "1":
+            login()
+        case "2":
+            register()
+    
