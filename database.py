@@ -14,9 +14,9 @@ class Item(Base):
     name = Column(String, nullable = False)
     description = Column(String, nullable = True)
     timeStamp = Column(DateTime, nullable = False, default = datetime.utcnow)
-    users = relationship("User", back_populates="items")
+    users = relationship("User", secondary="useritem", back_populates="items", single_parent = True)
     
-    
+# Users  
 class User(Base):
     __tablename__ = "users"
     userId = Column(Integer, primary_key = True, autoincrement = True)
@@ -24,7 +24,13 @@ class User(Base):
     name = Column(String, nullable = False)
     password = Column(String, nullable = False)
     # itemId = Column(Integer, ForeignKey("items.itemId"), nullable = True)
-    items = relationship("Item", back_populates="users")
+    items = relationship("Item", secondary="useritem", back_populates="users", single_parent = True)
+
+# User Items
+class UserItem(Base):
+    __tablename__ = "useritem"
+    userId = Column(Integer, ForeignKey("users.userId"), primary_key = True)
+    itemId = Column(Integer, ForeignKey("items.itemId"), primary_key = True)
     
 Base.metadata.create_all(engine)
 

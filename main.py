@@ -2,6 +2,8 @@ import sys
 import os
 from database import User, Item, Session
 
+from tabulate import tabulate
+
 loggedUser = []
 
 #
@@ -79,7 +81,6 @@ def login():
 #
 def main():
     while True:
-        print(loggedUser)
         print(f"{os.linesep}What do you want to do today?")
         print("1: View todo items")
         print("2: Create new todo item")
@@ -100,10 +101,16 @@ def showItems():
     print("---")
     with Session() as session:
         items = session.query(Item)
+        table = []
         for item in items:
             itemId = item.itemId
+            owner = item.owner
             itemName = item.name
-            print(f"{itemId}: {itemName}")
+            description = item.description
+            timeStamp = item.timeStamp
+            table.append([itemId, owner, itemName, description, timeStamp])
+        headers = ["ID", "Owner", "ItemName", "Description", "TimeStamp"]
+        print(tabulate(table, headers=headers, tablefmt='orgtbl'))
     print("---" + os.linesep)
     
 #
