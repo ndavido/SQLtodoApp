@@ -5,33 +5,6 @@ from database import User, Item, Session
 loggedUser = []
 
 #
-#   Login
-#
-def login():
-    print("Login Page")
-    with Session() as session:
-        print("---")
-        print("Please Enter your Email: ")
-        email = input()
-        user = session.query(User).filter( User.email == email ).first()
-        if user:
-            print("Please Enter your Password: ")
-            password = input()
-            if user.password == password:
-                print("Login Successful!")
-            else:
-                while password != user.password:
-                    print("Incorrect Password!")
-                    print("Please Enter your Password: ")
-                    password = input()
-        else:
-            print("User does not exist!")
-        loggedUser.append(user.name)   
-    print("---")
-    
-    main()
-
-#
 #   Registration
 #  
 def register():
@@ -73,6 +46,33 @@ def register():
     
     print("---")
     login()
+
+#
+#   Login
+#
+def login():
+    print("Login Page")
+    with Session() as session:
+        print("---")
+        print("Please Enter your Email: ")
+        email = input()
+        user = session.query(User).filter( User.email == email ).first()
+        if user:
+            print("Please Enter your Password: ")
+            password = input()
+            if user.password == password:
+                print("Login Successful!")
+            else:
+                while password != user.password:
+                    print("Incorrect Password!")
+                    print("Please Enter your Password: ")
+                    password = input()
+        else:
+            print("User does not exist!")
+        loggedUser.append(user.name)   
+    print("---")
+    
+    main()
 
 #
 #   Main
