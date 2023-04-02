@@ -115,14 +115,19 @@ def main():
 
         selection = input()
         try:
-            if selection == "1":
-                showItems()
-            if selection == "2":
-                createItems()
-            if selection == "3":
-                removeItems()
-            if selection == "4":
-                sys.exit("Goodbye!")
+            match selection:
+                case "1":
+                    showItems()
+                case "2":
+                    createItems()
+                case "3":
+                    removeItems()
+                case "4":
+                    sys.exit("Goodbye!")
+                case other:
+                    print("---")
+                    print("Invalid Option!")
+                    print("---")
         except Exception as e:
             print("---")
             print(
