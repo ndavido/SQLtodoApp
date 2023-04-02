@@ -14,19 +14,17 @@ def register():
     print("---")
     
     while True:
-        print("Please enter your email: ")
-        email = input()
+        print("Please enter your username: ")
+        username = input()
         with Session() as session:
-            user = session.query(User).filter( User.email == email ).first()
+            user = session.query(User).filter( User.username == username ).first()
             if user:
                 print("---")
-                print("Email is in use!")
+                print("Username is already taken!")
                 print("---")
             else:
                 break
                  
-    print("Please enter your name: ")
-    name = input()
     print("Please enter your password: ")
     password = input()
     print("Please re-enter your password: ")
@@ -42,7 +40,7 @@ def register():
             passwordConfirm = input()
     else:
         with Session() as session:
-            newUser = User(email = email, name = name, password = password)
+            newUser = User(username = username, password = password)
             session.add(newUser)
             session.commit()
     
@@ -56,9 +54,9 @@ def login():
     print("Login Page")
     with Session() as session:
         print("---")
-        print("Please Enter your Email: ")
-        email = input()
-        user = session.query(User).filter( User.email == email ).first()
+        print("Please Enter your Username: ")
+        username = input()
+        user = session.query(User).filter( User.username == username ).first()
         if user:
             print("Please Enter your Password: ")
             password = input()
@@ -71,7 +69,7 @@ def login():
                     password = input()
         else:
             print("User does not exist!")
-        loggedUser.append(user.name)   
+        loggedUser.append(user.username)   
     print("---")
     
     main()
@@ -137,6 +135,9 @@ def createItems():
     with Session() as session:
         newItem = Item( owner = loggedUser[0], name = itemName, description = description )
         session.add(newItem)
+        
+        user = session.query(User).filter( User.username == loggedUser[0] ).first()
+        newItem.users.append(user)
         session.commit()
         
 #

@@ -10,7 +10,7 @@ engine = create_engine("sqlite:///todo.db",echo=False, future = True)
 class Item(Base):
     __tablename__ = "items"
     itemId = Column(Integer, primary_key = True, autoincrement = True)
-    owner = Column(String, ForeignKey("users.name"))
+    owner = Column(String, ForeignKey("users.username"))
     name = Column(String, nullable = False)
     description = Column(String, nullable = True)
     timeStamp = Column(DateTime, nullable = False, default = datetime.utcnow)
@@ -20,8 +20,7 @@ class Item(Base):
 class User(Base):
     __tablename__ = "users"
     userId = Column(Integer, primary_key = True, autoincrement = True)
-    email = Column(String, nullable = False)
-    name = Column(String, nullable = False)
+    username = Column(String, nullable = False)
     password = Column(String, nullable = False)
     items = relationship("Item", secondary="useritem", back_populates="users", single_parent = True)
 
