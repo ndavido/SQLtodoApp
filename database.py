@@ -1,3 +1,8 @@
+#
+# Name: Dawid Nalepa
+# ID: 2209302
+#
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, create_engine, ForeignKey, DateTime
 from sqlalchemy.orm import relationship

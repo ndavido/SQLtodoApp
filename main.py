@@ -1,3 +1,8 @@
+#
+# Name: Dawid Nalepa
+# ID: 2209302
+#
+
 import sys
 import os
 from database import User, Item, Session
