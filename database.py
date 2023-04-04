@@ -28,6 +28,7 @@ class User(Base):
     userId = Column(Integer, primary_key = True, autoincrement = True)
     username = Column(String, nullable = False)
     password = Column(String, nullable = False)
+    sharedNotes = Column(Integer, ForeignKey("items.itemId"))
     items = relationship("Item", secondary="useritem", back_populates="users", single_parent = True)
 
 # User Items
