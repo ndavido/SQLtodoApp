@@ -19,6 +19,7 @@ class Item(Base):
     name = Column(String, nullable = False)
     description = Column(String, nullable = True)
     timeStamp = Column(DateTime, nullable = False, default = datetime.utcnow)
+    share = Column(String, ForeignKey("users.username"), nullable=True)
     users = relationship("User", secondary="useritem", back_populates="items", single_parent = True)
     
 # Users  
@@ -34,6 +35,7 @@ class UserItem(Base):
     __tablename__ = "useritem"
     userId = Column(Integer, ForeignKey("users.userId"), primary_key = True)
     itemId = Column(Integer, ForeignKey("items.itemId"), primary_key = True)
+    sharedUserId = Column(Integer, ForeignKey("items.share"), nullable = True)
     
 Base.metadata.create_all(engine)
 
