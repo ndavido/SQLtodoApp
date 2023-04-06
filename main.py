@@ -116,7 +116,8 @@ def main():
         print("1: View todo items")
         print("2: Create new todo item")
         print("3: Remove item")
-        print("4: Exit" + os.linesep)
+        print("4: Share Note")
+        print("5: Exit" + os.linesep)
 
         selection = input()
         try:
@@ -128,6 +129,8 @@ def main():
                 case "3":
                     removeItems()
                 case "4":
+                    shareNote()
+                case "5":
                     sys.exit("Goodbye!")
                 case other:
                     print("---")
@@ -229,7 +232,9 @@ def removeItems():
                 session.delete(removableItem.one())
                 session.commit()
             else:
+                print("---")
                 print("Invalid ID!")
+                print("---")
     except Exception as e:
         print("---")
         print(
@@ -237,7 +242,50 @@ def removeItems():
         print("---")
         return
 
-
+#
+#   Share Note
+#
+def shareNote():
+    try:
+        with Session() as session:
+            itemAmount = session.query(Item).count()
+            if itemAmount < 1:
+                print("You should add some items first.")
+                return
+            
+            showItems()
+            print("---")
+            print("Which Note would you like to share?")
+            print("---")
+            itemId = int(input())
+            
+            note = session.query(Item).filter( Item.itemId == itemId )
+            if note:
+                print("---")
+                print("Enter the user's username you wish to share the note with:")
+                shareUser = input()
+                print("---")
+                
+                user = session.query(User).filter( User.username == shareUser ).first()
+                if user:
+                    user.sharedNotes.append(itemId)
+                    note.share.append(user.username)
+                    print("Note has been shared succesfully")
+                else:
+                    print("---")
+                    print("User does not exist!")
+                    print("---")
+            else:
+                print("---")
+                print("Invalid ID!")
+                print("---")
+    except Exception as e:
+        print("---")
+        print(
+            f"Error occurred while performing operation!{os.linesep}Details: {e}")
+        print("---")
+        return
+    
 #
 # Loading Application
 #
