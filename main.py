@@ -14,15 +14,13 @@ loggedUser = []
 # Registration
 #
 
-
 def register():
     print("Registration Page")
     print("---")
 
     while True:
         try:
-            print("Please enter your username: ")
-            username = input()
+            username = input("Please enter your username: ")
             with Session() as session:
                 user = session.query(User).filter(
                     User.username == username).first()
@@ -39,19 +37,15 @@ def register():
             print("---")
             return
 
-    print("Please enter your password: ")
-    password = input()
-    print("Please re-enter your password: ")
-    passwordConfirm = input()
+    password = input("Please enter your password: ")
+    passwordConfirm = input("Please re-enter your password: ")
     print("---")
 
     if password != passwordConfirm:
         while password != passwordConfirm:
             print("Passwords entered do not match!")
-            print("Please enter your password: ")
-            password = input()
-            print("Please re-enter your password: ")
-            passwordConfirm = input()
+            password = input("Please enter your password: ")
+            passwordConfirm = input("Please re-enter your password: ")
     else:
         with Session() as session:
             try:
@@ -72,29 +66,25 @@ def register():
 # Login
 #
 
-
 def login():
     print("Login Page")
     with Session() as session:
         try:
             print("---")
-            print("Please Enter your Username: ")
-            username = input()
+            username = input("Please Enter your Username: ")
             user = session.query(User).filter(
                 User.username == username).first()
             if user:
-                print("Please Enter your Password: ")
-                password = input()
+                password = input("Please Enter your Password: ")
                 if user.password == password:
                     print("Login Successful!")
                 else:
                     while password != user.password:
                         print("Incorrect Password!")
-                        print("Please Enter your Password: ")
-                        password = input()
+                        password = input("Please Enter your Password: ")
             else:
                 print("User does not exist!")
-            loggedUser.append(user.username)
+            loggedUser.append(user.userId)
         except Exception as e:
             print("---")
             print(
@@ -109,7 +99,6 @@ def login():
 # Main
 #
 
-
 def main():
     while True:
         print(f"{os.linesep}What do you want to do today?")
@@ -119,7 +108,7 @@ def main():
         print("4: Share Note")
         print("5: Exit" + os.linesep)
 
-        selection = input()
+        selection = input("Your Choice: ")
         try:
             match selection:
                 case "1":
@@ -147,13 +136,12 @@ def main():
 # Show Item
 #
 
-
 def showItems():
     print("Your todo lists:")
     print("---")
     with Session() as session:
         try:
-            items = session.query(Item).filter(Item.owner == loggedUser[0])
+            items = session.query(Item).filter(Item.users == loggedUser[0])
             table = []
             for item in items:
                 itemId = item.itemId
@@ -175,11 +163,9 @@ def showItems():
 # Create Item
 #
 
-
 def createItems():
     try:
-        print("Name for the item:")
-        itemName = input()
+        itemName = input("Name for the item: ")
 
         print("Would you like to add a description?")
         print('''
@@ -187,11 +173,10 @@ def createItems():
             2: NO  
         ''')
 
-        userInput = input()
+        userInput = input("Your Choice: ")
         match userInput:
             case "1":
-                print("Please enter the description:")
-                description = input()
+                description = input("Please enter the description: ")
             case "2":
                 description = None
 
@@ -211,10 +196,10 @@ def createItems():
             f"Error occurred while performing operation!{os.linesep}Details: {e}")
         print("---")
         return
+    
 #
 # Remove Item
 #
-
 
 def removeItems():
     try:
@@ -224,8 +209,7 @@ def removeItems():
                 print("You should add some items first.")
                 return
 
-            print("Give ID to remove:")
-            itemId = int(input())
+            itemId = int(input("Give ID to remove: "))
 
             removableItem = session.query(Item).filter(Item.itemId == itemId)
             if (removableItem.count() > 0):
@@ -245,6 +229,7 @@ def removeItems():
 #
 #   Share Note
 #
+
 def shareNote():
     try:
         with Session() as session:
@@ -252,24 +237,27 @@ def shareNote():
             if itemAmount < 1:
                 print("You should add some items first.")
                 return
-            
+
             showItems()
             print("---")
-            print("Which Note would you like to share?")
+            print("Which Note would you like to share?")    
+            itemId = int(input("Your Choice: "))
             print("---")
-            itemId = int(input())
-            
-            note = session.query(Item).filter( Item.itemId == itemId )
+#
+#   Pay extra attention
+#   To this section
+#
+            note = session.query(Item).filter(Item.itemId == itemId)
             if note:
                 print("---")
-                print("Enter the user's username you wish to share the note with:")
-                shareUser = input()
+                shareUser = input("Enter the user's username you wish to share the note with: ")
                 print("---")
-                
-                user = session.query(User).filter( User.username == shareUser ).first()
+
+                user = session.query(User).filter(
+                    User.username == shareUser).first()
                 if user:
                     user.sharedNotes.append(itemId)
-                    note.share.append(user.username)
+                    # note.share.append(user.username)
                     print("Note has been shared succesfully")
                 else:
                     print("---")
@@ -279,16 +267,21 @@ def shareNote():
                 print("---")
                 print("Invalid ID!")
                 print("---")
+#
+#
+#
+#
     except Exception as e:
         print("---")
         print(
             f"Error occurred while performing operation!{os.linesep}Details: {e}")
         print("---")
         return
-    
+
 #
 # Loading Application
 #
+
 if __name__ == "__main__":
     print("Welcome to TOD-O LIST O-MAKER Version 5123.524")
 
@@ -296,7 +289,7 @@ if __name__ == "__main__":
         1: Login
         2: Register   
     ''')
-    userInput = input()
+    userInput = input("Your Choice: ")
 
     while True:
         try:
