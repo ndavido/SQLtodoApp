@@ -141,17 +141,23 @@ def showItems():
     print("---")
     with Session() as session:
         try:
-            items = session.query(Item).filter(Item.users.any(User.userId == loggedUser[0]))
-            table = []
-            for item in items:
-                itemId = item.itemId
-                owner = item.owner
-                itemName = item.name
-                description = item.description
-                timeStamp = item.timeStamp
-                table.append([itemId, owner, itemName, description, timeStamp])
-            headers = ["Item ID", "Owner ID", "Item Name", "Description", "Time Stamp"]
-            print(tabulate(table, headers=headers, tablefmt='orgtbl'))
+            itemAmount = session.query(Item).filter(Item.users.any(User.userId == loggedUser[0])).count()
+            if itemAmount > 0:
+                items = session.query(Item).filter(Item.users.any(User.userId == loggedUser[0]))
+                table = []
+                for item in items:
+                    itemId = item.itemId
+                    owner = item.owner
+                    itemName = item.name
+                    description = item.description
+                    timeStamp = item.timeStamp
+                    table.append([itemId, owner, itemName, description, timeStamp])
+                headers = ["Item ID", "Owner ID", "Item Name", "Description", "Time Stamp"]
+                print(tabulate(table, headers=headers, tablefmt='orgtbl'))
+            else:
+                print("---")
+                print("You should add some items first.")
+                print("---")
         except Exception as e:
             print("---")
             print(
@@ -209,7 +215,7 @@ def createItems():
 def removeItems():
     try:
         with Session() as session:
-            itemAmount = session.query(Item).count()
+            itemAmount = session.query(Item).filter(Item.users.any(User.userId == loggedUser[0])).count()
             if itemAmount < 1:
                 print("You should add some items first.")
                 return
@@ -238,7 +244,7 @@ def removeItems():
 def shareNote():
     try:
         with Session() as session:
-            itemAmount = session.query(Item).count()
+            itemAmount = session.query(Item).filter(Item.users.any(User.userId == loggedUser[0])).count()
             if itemAmount < 1:
                 print("You should add some items first.")
                 return
@@ -249,6 +255,7 @@ def shareNote():
             itemId = int(input("Your Choice: "))
             print("---")
 #
+#   Note To Self:
 #   Pay extra attention
 #   To this section
 #
