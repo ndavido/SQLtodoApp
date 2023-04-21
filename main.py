@@ -5,7 +5,7 @@
 
 import sys
 import os
-from database import User, Item, Session
+from database import User, Item, UserItem, Session
 from tabulate import tabulate
 
 loggedUser = []
@@ -141,7 +141,7 @@ def showItems():
     print("---")
     with Session() as session:
         try:
-            items = session.query(Item).filter(Item.users == loggedUser[0])
+            items = session.query(Item).filter(Item.users.any(User.userId == loggedUser[0]))
             table = []
             for item in items:
                 itemId = item.itemId
@@ -150,7 +150,7 @@ def showItems():
                 description = item.description
                 timeStamp = item.timeStamp
                 table.append([itemId, owner, itemName, description, timeStamp])
-            headers = ["ID", "Owner", "ItemName", "Description", "TimeStamp"]
+            headers = ["Item ID", "Owner ID", "Item Name", "Description", "Time Stamp"]
             print(tabulate(table, headers=headers, tablefmt='orgtbl'))
         except Exception as e:
             print("---")
@@ -186,8 +186,13 @@ def createItems():
             session.add(newItem)
 
             user = session.query(User).filter(
-                User.username == loggedUser[0]).first()
+                User.userId == loggedUser[0]).first()
             newItem.users.append(user)
+            session.commit()
+            
+            owner = session.query(UserItem).filter(
+                UserItem.userId == loggedUser[0]).first()
+            owner.is_owner = True	
             session.commit()
 
     except Exception as e:
@@ -247,17 +252,18 @@ def shareNote():
 #   Pay extra attention
 #   To this section
 #
-            note = session.query(Item).filter(Item.itemId == itemId)
+            note = session.query(Item).filter(Item.itemId == itemId).first()
             if note:
                 print("---")
-                shareUser = input("Enter the user's username you wish to share the note with: ")
+                shareUser = input("Enter the user's ID you wish to share the note with: ")
                 print("---")
 
                 user = session.query(User).filter(
-                    User.username == shareUser).first()
+                    User.userId == shareUser).first()
                 if user:
-                    user.sharedNotes.append(itemId)
-                    # note.share.append(user.username)
+                    user.sharedNotes = itemId
+                    note.sharedUser = user.userId
+                    note.users.append(user)
                     print("Note has been shared succesfully")
                 else:
                     print("---")
@@ -267,6 +273,8 @@ def shareNote():
                 print("---")
                 print("Invalid ID!")
                 print("---")
+            
+            session.commit()
 #
 #
 #
