@@ -143,17 +143,19 @@ def showItems():
         try:
             itemAmount = session.query(Item).filter(Item.users.any(User.userId == loggedUser[0])).count()
             if itemAmount > 0:
-                items = session.query(Item).filter(Item.users.any(User.userId == loggedUser[0]))
-                table = []
-                for item in items:
-                    itemId = item.itemId
-                    owner = item.owner
-                    itemName = item.name
-                    description = item.description
-                    timeStamp = item.timeStamp
-                    table.append([itemId, owner, itemName, description, timeStamp])
-                headers = ["Item ID", "Owner ID", "Item Name", "Description", "Time Stamp"]
-                print(tabulate(table, headers=headers, tablefmt='orgtbl'))
+                owned_items = session.query(Item).filter(Item.owner == loggedUser[0]).count()
+
+                if owned_items > 0:
+                    items = session.query(Item).filter(Item.owner == loggedUser[0])
+                    createTable(items)
+                    print("---")
+                shared_items = session.query(Item).filter(Item.sharedUser == loggedUser[0]).count()
+                if shared_items:
+                    items = session.query(Item).filter(Item.sharedUser == loggedUser[0])
+                    print("Shared todo lists:")
+                    print("---")
+                    createTable(items)
+                    print("---")
             else:
                 print("---")
                 print("You should add some items first.")
@@ -164,6 +166,19 @@ def showItems():
                 f"Error occurred while performing operation!{os.linesep}Details: {e}")
             print("---")
             return
+
+
+def createTable(items):
+    table = []
+    for item in items:
+        itemId = item.itemId
+        owner = item.owner
+        itemName = item.name
+        description = item.description
+        timeStamp = item.timeStamp
+        table.append([itemId, owner, itemName, description, timeStamp])
+    headers = ["Item ID", "Owner ID", "Item Name", "Description", "Time Stamp"]
+    print(tabulate(table, headers=headers, tablefmt='orgtbl'))
 
 #
 # Create Item
