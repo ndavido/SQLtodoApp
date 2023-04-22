@@ -176,17 +176,19 @@ def showItems():
                     print("---")
 
                 # Gte the number of items shared with the user
-                shared_items = session.query(Item).filter(
-                    Item.sharedUser == loggedUser[0]).count()
+                shared_users = session.query(User).filter(User.items.any(Item.sharedUser == loggedUser[0]))
 
-                if shared_items:
-                    # Get all the items shared with the user and print them in a table
-                    items = session.query(Item).filter(
-                        Item.sharedUser == loggedUser[0])
-                    print("Shared todo lists:")
-                    print("---")
-                    createTable(items)
-                    print("---")
+                for user in shared_users:
+                    # Get all the items shared with the user by this user and print them in a table
+                    itemAmount = session.query(Item).filter(
+                        Item.sharedUser == loggedUser[0], Item.owner == user.userId).count()
+                    if itemAmount > 0:
+                        items = session.query(Item).filter(
+                        Item.sharedUser == loggedUser[0], Item.owner == user.userId)
+                        print(f"Listing all notes shared with you by user {user.username}:")
+                        print("---")
+                        createTable(items)
+                        print("---")
             else:
                 print("---")
                 print("You should add some items first.")
